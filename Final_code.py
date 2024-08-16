@@ -445,4 +445,43 @@ print(confusion_matrix(y_true, y_pred))
 
 print("Model trained, evaluated on test data, and saved successfully as 'emotion_classification_model.h5'.")
 
+import matplotlib.pyplot as plt
+import tensorflow as tf
+from tensorflow import keras
+import numpy as np
+import os
 
+# Define the image size (same as used during training)
+img_height, img_width = 128, 128
+
+# Load the trained model
+model = tf.keras.models.load_model('emotion_classification_model.h5')
+
+# Function to load and preprocess an image
+def load_and_preprocess_image(image_path):
+    img = keras.utils.load_img(image_path, target_size=(img_height, img_width))
+    img_array = keras.utils.img_to_array(img)
+    img_array = tf.expand_dims(img_array, 0)  # Create batch axis
+    return img_array
+
+# Path to a sample image from your dataset
+image_path =r"C:\Users\Ashutosh Patil\Desktop\IITB\9877360256_frame0.jpg"  # Replace with the actual path to the image
+
+# Load and display the image
+img_array = load_and_preprocess_image(image_path)
+img = keras.utils.load_img(image_path, target_size=(img_height, img_width))
+plt.imshow(img)
+plt.show()
+
+# Make predictions
+predictions = model.predict(img_array)
+predicted_class = np.argmax(predictions, axis=1)
+
+# Get class indices
+class_names = ['Boredom', 'Confusion', 'Engagement', 'Frustration']
+
+# Print the predicted class and probability for each class
+print(f"Predicted Emotion: {class_names[predicted_class[0]]} ({predictions[0][predicted_class[0]] * 100:.2f}%)")
+print("Probabilities for each emotion:")
+for i, prob in enumerate(predictions[0]):
+    print(f"{class_names[i]}: {prob * 100:.2f}%")
